@@ -15,9 +15,3 @@
 - Android Studio 4.2+
 - Android SDK 21+
 - Gradle
-# SaathiTest
-# SaathiTest
-# SaathiTest
-# SaathiTest
-# SaathiTest
-# SaathiTest

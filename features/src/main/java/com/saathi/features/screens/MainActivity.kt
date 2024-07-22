@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
         )
         val referTab = TabBarItem(
             title = "Refer & Earn",
-            selectedIcon = painterResource(id = R.drawable.ic_refer_selected),
+            selectedIcon = painterResource(id = R.drawable.ic_refer_unselected),
             unselectedIcon = painterResource(id = R.drawable.ic_refer_unselected)
         )
 

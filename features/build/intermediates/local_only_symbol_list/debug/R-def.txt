@@ -1,0 +1,27 @@
+R_DEF: Internal format may change without notice
+local
+drawable facebook
+drawable horizontal_line
+drawable ic_arrow_right
+drawable ic_back_arrow
+drawable ic_certificates
+drawable ic_refer_selected
+drawable ic_refer_unselected
+drawable ic_training
+drawable ic_true_id
+drawable ic_wallet
+drawable one
+drawable rectangle_user
+drawable two
+drawable whatsapp
+font inter
+string _1_000
+string earn_100_everytime
+string invite_your_friends
+string next
+string refer_karein_aur
+string start_a_course
+string step
+string tak_roz_kamayein
+string your_referral_link
+string your_referral_link_is_locked_start_a_course_to_unlock_it_earn_with_referrals

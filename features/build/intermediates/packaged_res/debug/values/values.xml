@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="_1_000">₹1,000</string>
+    <string name="earn_100_everytime">Earn ₹100 everytime</string>
+    <string name="invite_your_friends">Invite your friends</string>
+    <string name="next">Next</string>
+    <string name="refer_karein_aur">REFER\nKarein Aur</string>
+    <string name="start_a_course">Start a Course</string>
+    <string name="step">Step</string>
+    <string name="tak_roz_kamayein">tak roz kamayein</string>
+    <string name="your_referral_link">Your Referral Link</string>
+    <string name="your_referral_link_is_locked_start_a_course_to_unlock_it_earn_with_referrals"><![CDATA[Your referral link is locked. Start a course to unlock it & earn with referrals]]></string>
+</resources>

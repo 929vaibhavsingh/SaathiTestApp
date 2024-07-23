@@ -2,6 +2,7 @@ package com.saathi.features.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -48,9 +49,10 @@ fun MainActivityTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
+            window.statusBarColor = DarkBlue.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
+            window.navigationBarColor = DarkBlue.toArgb()
+         }
     }
 
     MaterialTheme(

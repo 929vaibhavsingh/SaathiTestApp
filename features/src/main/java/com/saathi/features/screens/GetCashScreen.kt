@@ -28,6 +28,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
  import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import com.saathi.features.R
 import com.saathi.features.theme.BlueScreenGradientBrush
 import com.saathi.features.theme.Purple50
@@ -36,7 +37,7 @@ import com.saathi.features.theme.YellowTextGradientBrush
 import com.saathi.features.theme.YellowTextShadow
 
 @Composable
-fun GetCashScreen() {
+fun GetCashScreen(navController: NavHostController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +50,7 @@ fun GetCashScreen() {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
+                painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "image description",
                 contentScale = ContentScale.None,
                 modifier = Modifier.padding(10.dp)

@@ -16,6 +16,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,6 +42,13 @@ import com.saathi.features.theme.YellowTextShadow
 
 @Composable
 fun GetCashScreen(navController: NavHostController) {
+    var showSheet by remember { mutableStateOf(false) }
+
+    if (showSheet) {
+        BottomSheet {
+            showSheet = false
+        }
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -107,7 +118,9 @@ fun GetCashScreen(navController: NavHostController) {
         }
         Spacer(modifier = Modifier.height(23.dp))
         Button(
-            onClick = { },
+            onClick = {
+                showSheet = true
+            },
             modifier = Modifier
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(10.dp))

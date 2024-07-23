@@ -27,7 +27,7 @@ object JetpackCompose {
     const val composeBom = "androidx.compose:compose-bom:2023.03.00"
     const val composeUIGraphics = "androidx.compose.ui:ui-graphics"
     const val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview"
-    const val composeMaterial = "androidx.compose.material3:material3"
+    const val composeMaterial = "androidx.compose.material3:material3-android:1.2.1"
     const val composeNavigation = "androidx.navigation:navigation-compose:2.7.7"
     const val composeLifecycle = "androidx.lifecycle:lifecycle-runtime-compose:2.7.0"
 }

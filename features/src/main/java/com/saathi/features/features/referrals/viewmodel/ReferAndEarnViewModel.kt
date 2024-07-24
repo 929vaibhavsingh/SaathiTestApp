@@ -10,7 +10,9 @@ import com.saathi.features.features.wallet.intent.WalletIntent
 import com.saathi.features.features.referrals.viewstate.ReferralViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -23,8 +25,8 @@ class ReferAndEarnViewModel @Inject constructor(
     private val ioDispatcher: CoroutineDispatcher,
 
     ) : ViewModel() {
-    private val _referralState = MutableStateFlow<ReferralViewState>(ReferralViewState.Idle)
-    val referralDataState: StateFlow<ReferralViewState> = _referralState.asStateFlow()
+    private val _referralState = MutableSharedFlow<ReferralViewState>()
+    val referralDataState: SharedFlow<ReferralViewState> = _referralState
     fun sendIntent(intent: ReferralIntent) {
         when (intent) {
             is ReferralIntent.GetReferral -> {

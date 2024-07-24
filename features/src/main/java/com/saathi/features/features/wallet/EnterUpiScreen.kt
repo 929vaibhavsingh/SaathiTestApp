@@ -3,10 +3,27 @@
 package com.saathi.features.features.wallet
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -19,7 +36,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.saathi.common.di.ValidationUtils
+import com.saathi.common.ValidationUtils
 import com.saathi.domain.model.RedeemAmountRequest
 import com.saathi.features.R
 import com.saathi.features.component.CircularProgressDialog
@@ -28,25 +45,36 @@ import com.saathi.features.features.wallet.viewmodel.WalletViewModel
 import com.saathi.features.features.wallet.viewstate.RedeemAmountViewState
 import com.saathi.features.features.wallet.viewstate.UPIFieldState
 import com.saathi.features.features.wallet.viewstate.VerifyUpiViewState
+import com.saathi.features.theme.DarkBlue
 import com.saathi.features.theme.Purple50
 import com.saathi.features.theme.YellowButtonGradientBrush
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BottomSheet(
+fun EnterUpiBottomSheet(
     viewModel: WalletViewModel,
     onDismiss: () -> Unit,
-    processPayment: (isSuccess: Boolean) -> Unit
+    onPaymentSuccess: (isSuccess: Boolean) -> Unit
 ) {
     val state by viewModel.redeemAmountDataState.collectAsState(initial = RedeemAmountViewState.Idle)
     val verifyUpiState by viewModel.verifyUpiDataState.collectAsState(initial = VerifyUpiViewState.Idle)
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     var isDialogVisible by remember { mutableStateOf(false) }
+
     var isShowPaymentProcessingDialog by remember { mutableStateOf(false) }
+
     var isShowPaymentSuccessDialog by remember { mutableStateOf(false) }
+
     var isUpiVerified by remember { mutableStateOf(false) }
-    var text by remember { mutableStateOf(TextFieldValue("")) }
+
+    var upiText by remember { mutableStateOf(TextFieldValue("")) }
 
     CircularProgressDialog(
         isVisible = isDialogVisible,
@@ -60,6 +88,7 @@ fun BottomSheet(
     if (isShowPaymentSuccessDialog) {
         LoadSuccessPaymentDialog {
             isShowPaymentSuccessDialog = false
+            onPaymentSuccess(true)
             onDismiss.invoke()
         }
     }
@@ -67,13 +96,18 @@ fun BottomSheet(
     when (state) {
         is RedeemAmountViewState.Loading -> isShowPaymentProcessingDialog = true
         is RedeemAmountViewState.Success -> {
-            isShowPaymentProcessingDialog = true
-            isShowPaymentSuccessDialog = true
+            CoroutineScope(Dispatchers.IO).launch {
+                delay(TimeUnit.SECONDS.toMillis(3))
+                isShowPaymentProcessingDialog = false
+                isShowPaymentSuccessDialog = true
+            }
         }
+
         is RedeemAmountViewState.Error -> {
             isShowPaymentProcessingDialog = false
-            processPayment(false)
+            onPaymentSuccess(false)
         }
+
         else -> Unit
     }
 
@@ -83,6 +117,7 @@ fun BottomSheet(
             isDialogVisible = false
             isUpiVerified = true
         }
+
         else -> Unit
     }
 
@@ -93,21 +128,23 @@ fun BottomSheet(
         dragHandle = { BottomSheetDefaults.DragHandle() }
     ) {
         UpiBottomSheet(
-            upiText = text,
+            upiText = upiText,
             isUpiVerified = isUpiVerified,
-            onTextChange = { text = it },
+            onTextChange = { upiText = it },
             onClick = {
-                val intent = if (isUpiVerified) {
-                    WalletIntent.RedeemAmount(
-                        RedeemAmountRequest(
-                            "669a1a48ed716df191be88aa",
-                            "7004617522@upi"
+                if (ValidationUtils.isValidUpiId(upiText.text)) {
+                    val intent = if (isUpiVerified) {
+                        WalletIntent.RedeemAmount(
+                            RedeemAmountRequest(
+                                "669a1a48ed716df191be88aa",
+                                "7004617522@upi"
+                            )
                         )
-                    )
-                } else {
-                    WalletIntent.VerifyWallet(text.text)
+                    } else {
+                        WalletIntent.VerifyWallet(upiText.text)
+                    }
+                    viewModel.sendIntent(intent)
                 }
-                viewModel.sendIntent(intent)
             }
         )
     }
@@ -120,7 +157,7 @@ fun UpiBottomSheet(
     onTextChange: (TextFieldValue) -> Unit,
     onClick: () -> Unit
 ) {
-    var textState : UPIFieldState by remember { mutableStateOf(UPIFieldState.IDLE) }
+    var textState: UPIFieldState by remember { mutableStateOf(UPIFieldState.IDLE) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
@@ -164,7 +201,7 @@ fun UpiBottomSheet(
         )
 
         VerifyButton(
-            buttonText = if (isUpiVerified) "Verify" else "Get Cash",
+            buttonText = if (isUpiVerified) "Get Cash" else "Verify",
             onClick = onClick
         )
     }
@@ -186,8 +223,8 @@ private fun VerifyButton(buttonText: String, onClick: () -> Unit) {
                 fontSize = 16.sp,
                 lineHeight = 30.sp,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Bold,
-                color = Purple50,
+                fontWeight = FontWeight(700),
+                color = DarkBlue,
                 textAlign = TextAlign.Center
             )
         )

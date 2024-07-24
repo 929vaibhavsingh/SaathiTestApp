@@ -2,19 +2,14 @@ package com.saathi.features.features
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -77,7 +72,7 @@ fun MainScreen(mainNavController: NavHostController) {
     ) {
         NavHost(navController = navController, startDestination = trainingTab.title) {
             composable(trainingTab.title) {
-                Text(trainingTab.title)
+                ReferAndEarn(mainNavController)
             }
             composable(certificatesTab.title) {
                 Text(certificatesTab.title)

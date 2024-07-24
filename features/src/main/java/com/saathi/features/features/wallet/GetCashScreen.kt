@@ -2,8 +2,13 @@ package com.saathi.features.features.wallet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -26,24 +31,32 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import com.saathi.features.R
-import com.saathi.features.constants.Screen
+import com.saathi.features.component.Header
 import com.saathi.features.features.wallet.viewmodel.WalletViewModel
 import com.saathi.features.theme.BlueScreenGradientBrush
-import com.saathi.features.theme.Purple50
+import com.saathi.features.theme.DarkBlue
 import com.saathi.features.theme.YellowButtonGradientBrush
 import com.saathi.features.theme.YellowTextGradientBrush
 import com.saathi.features.theme.YellowTextShadow
 
 @Composable
-fun GetCashScreen(navController: NavHostController, viewModel: WalletViewModel = hiltViewModel()) {
-    var showSheet by remember { mutableStateOf(false) }
+fun GetCashScreen(
+    viewModel: WalletViewModel = hiltViewModel(),
+    onDismissUpi: () -> Unit,
+    onClickBackButton: () -> Unit
+) {
+    var showUpiBottomSheet by remember { mutableStateOf(false) }
 
-    if (showSheet) {
-        BottomSheet(viewModel, onDismiss = { showSheet = false }) {
-            showSheet = false
-            navController.navigate(Screen.PaymentProcessingScreen.route)
+    if (showUpiBottomSheet) {
+        EnterUpiBottomSheet(viewModel, onDismiss = {
+            showUpiBottomSheet = false
+         }){isPaymentSuccess ->
+            if (isPaymentSuccess)
+            {
+                showUpiBottomSheet = false
+                onDismissUpi.invoke()
+            }
         }
     }
 
@@ -53,56 +66,30 @@ fun GetCashScreen(navController: NavHostController, viewModel: WalletViewModel =
             .background(BlueScreenGradientBrush)
             .padding(16.dp)
     ) {
-        Header()
+        Header("Get Cash", onClickBackButton)
         Spacer(modifier = Modifier.height(18.dp))
-        EarningsCard()
+        EarningsCard(
+            Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF281D5D), RoundedCornerShape(12.dp))
+                .padding(16.dp)
+                .weight(1f)
+        )
         Spacer(modifier = Modifier.height(23.dp))
-        GetCashButton(onClick = { showSheet = true })
+        GetCashButton(onClick = { showUpiBottomSheet = true })
     }
 }
 
-@Composable
-private fun Header() {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_back_arrow),
-            contentDescription = "Back Arrow",
-            modifier = Modifier
-                .clickable { /* Handle back navigation */ }
-                .padding(10.dp)
-        )
-        Text(
-            text = "Get Cash",
-            style = TextStyle(
-                fontSize = 20.sp,
-                lineHeight = 28.sp,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        )
-    }
-}
 
 @Composable
-private fun EarningsCard() {
+private fun EarningsCard(modifier: Modifier) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFF281D5D), RoundedCornerShape(12.dp))
-            .padding(16.dp)
-            .height(617.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_arrow_right),
+            painter = painterResource(id = R.drawable.ic_amount_wallet),
             contentDescription = "Arrow Right",
             contentScale = ContentScale.None
         )
@@ -113,7 +100,7 @@ private fun EarningsCard() {
                 fontSize = 52.sp,
                 lineHeight = 56.sp,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Normal,
+                fontWeight = FontWeight(700),
                 brush = YellowTextGradientBrush,
                 shadow = YellowTextShadow,
                 textAlign = TextAlign.Center
@@ -149,8 +136,8 @@ private fun GetCashButton(onClick: () -> Unit) {
                 fontSize = 16.sp,
                 lineHeight = 30.sp,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight.Bold,
-                color = Purple50,
+                fontWeight = FontWeight(700),
+                color = DarkBlue,
                 textAlign = TextAlign.Center
             )
         )

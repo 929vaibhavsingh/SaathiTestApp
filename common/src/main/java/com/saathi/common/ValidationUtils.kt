@@ -1,4 +1,4 @@
-package com.saathi.common.di
+package com.saathi.common
 
 import java.util.regex.Pattern
 

@@ -1,6 +1,7 @@
 package com.saathi.features.features
 
 import android.os.Bundle
+import android.window.OnBackInvokedDispatcher
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.saathi.features.constants.Screen
+import com.saathi.features.features.faq.TermsAndCondition
 import com.saathi.features.features.wallet.GetCashScreen
 import com.saathi.features.features.wallet.PaymentProcessingScreen
 import com.saathi.features.theme.MainActivityTheme
@@ -41,20 +43,41 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             route = Screen.GetCashScreen.route
-                         ) {
+                        ) {
 
-                            GetCashScreen(navController = navController)
+                            GetCashScreen(onDismissUpi = { onBackPressedDispatcher.onBackPressed() }) {
+                                onBackPressedDispatcher.onBackPressed()
+
+                            }
                         }
                         composable(
                             route = Screen.PaymentProcessingScreen.route
-                         ) {
+                        ) {
 
-                         }
+                        }
+                        composable(
+                            route = Screen.TermsAndConditionScreen.route
+                        ) {
+                            TermsAndCondition {
+                                onBackPressedDispatcher.onBackPressed()
+                            }
+                        }
+                        composable(
+                            route = Screen.FaqScreen.route
+                        ) {
+                            TermsAndCondition {
+                                onBackPressedDispatcher.onBackPressed()
+                            }
+                        }
                     }
                 }
             }
 
         }
+    }
+
+    override fun getOnBackInvokedDispatcher(): OnBackInvokedDispatcher {
+        return super.getOnBackInvokedDispatcher()
     }
 
 }

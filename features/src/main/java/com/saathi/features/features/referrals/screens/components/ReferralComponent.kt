@@ -36,12 +36,11 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.saathi.features.R
-import com.saathi.features.constants.Screen
-import com.saathi.features.features.referrals.intent.ReferralIntent
-import com.saathi.features.features.referrals.viewmodel.ReferAndEarnViewModel
+import com.saathi.features.theme.BlueBg
 import com.saathi.features.theme.DarkBlue
 import com.saathi.features.theme.DarkBlue40
 import com.saathi.features.theme.Purple50
@@ -54,11 +53,16 @@ import com.saathi.features.theme.YellowTextShadow
 import java.util.Locale
 
 @Composable
-fun ReferAndEarnUi(viewModel: ReferAndEarnViewModel,onClickWallet :()->Unit) {
+fun ReferAndEarnUi(
+    onClickWallet: () -> Unit,
+    onClickRefer: () -> Unit,
+    onClickTermsCondition: () -> Unit,
+    onClickFaq: () -> Unit
+) {
     var isPurchase by rememberSaveable { mutableStateOf(false) }
     Column(
         modifier = Modifier
-            .background(color = Purple50)
+            .background(color = BlueBg)
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
 
@@ -66,7 +70,8 @@ fun ReferAndEarnUi(viewModel: ReferAndEarnViewModel,onClickWallet :()->Unit) {
         setWalletIcon(
             isPurchase,
             modifier = Modifier
-                .padding(top = 9.dp, end = 16.dp, bottom = 7.dp).align(Alignment.End), onClickWallet
+                .padding(top = 9.dp, end = 16.dp, bottom = 7.dp)
+                .align(Alignment.End), onClickWallet
         )
         ReferKareinText()
         Spacer(Modifier.height(8.dp))
@@ -76,18 +81,23 @@ fun ReferAndEarnUi(viewModel: ReferAndEarnViewModel,onClickWallet :()->Unit) {
         Spacer(Modifier.height(44.dp))
         CourseImage()
         Spacer(Modifier.height(18.dp))
-        ReferralUi(isPurchase){
+        ReferralUi(isPurchase, {
             isPurchase = true
-            viewModel.sendIntent(ReferralIntent.GetReferral)
-        }
+        },onClickRefer,onClickTermsCondition,onClickFaq)
 
     }
 }
 
 @Composable
-private fun ReferralUi(isPurchase : Boolean,onPurchase: () -> Unit) {
+private fun ReferralUi(
+    isPurchase: Boolean,
+    onPurchase: () -> Unit,
+    onClickRefer: () -> Unit,
+    onClickTermsCondition: () -> Unit,
+    onClickFaq: () -> Unit
+) {
     if (isPurchase) {
-        ReferralLinkUi()
+        ReferralLinkUi(onClickRefer,onClickTermsCondition,onClickFaq)
     } else {
         CourseLinkUi(onPurchase)
     }
@@ -160,7 +170,7 @@ private fun setWalletIcon(isPurchase: Boolean, modifier: Modifier, onClickWallet
     if (isPurchase) {
         Image(
             modifier = modifier.clickable {
-               onClickWallet.invoke()
+                onClickWallet.invoke()
             },
             painter = painterResource(id = R.drawable.ic_wallet), // Replace with your image resource
             contentDescription = stringResource(R.string.earn_100_everytime),
@@ -204,7 +214,7 @@ private fun CourseLinkUi(onPurchase: () -> Unit) {
             ReferralStep()
             Spacer(Modifier.height(24.dp))
             Row(
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.Start),
+
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -216,12 +226,14 @@ private fun CourseLinkUi(onPurchase: () -> Unit) {
 
                     .background(
                         color = DarkBlue40,
-                        shape = RoundedCornerShape(topStart = 25f, bottomStart = 25f)
+                        shape = RoundedCornerShape(size = 10.dp)
                     )
-
-                    .padding(start = 20.dp, top = 12.dp, end = 20.dp, bottom = 12.dp)
+                    .padding(end = 16.dp)
             ) {
                 Text(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .weight(1f),
                     text = stringResource(R.string.your_referral_link_is_locked_start_a_course_to_unlock_it_earn_with_referrals),
                     style = TextStyle(
                         fontSize = 14.sp,
@@ -232,13 +244,15 @@ private fun CourseLinkUi(onPurchase: () -> Unit) {
 
                         )
                 )
+                Image(
+                    painter = painterResource(id = R.drawable.ic_course_lock),
+                    contentDescription = stringResource(R.string.your_referral_link_is_locked_start_a_course_to_unlock_it_earn_with_referrals)
+                )
             }
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = {
                     onPurchase.invoke()
-//                    viewModel.sendIntent(ReferralIntent.GetReferral)
-//                        mainNavController.navigate(Screen.GetCashScreen.route)
                 },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -274,7 +288,11 @@ private fun CourseLinkUi(onPurchase: () -> Unit) {
 
 
 @Composable
-private fun ReferralLinkUi() {
+private fun ReferralLinkUi(
+    onClickRefer: () -> Unit,
+    onClickTermsCondition: () -> Unit,
+    onClickFaq: () -> Unit
+) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = DarkBlue,
@@ -354,32 +372,33 @@ private fun ReferralLinkUi() {
 
                 Button(
                     onClick = {
-//                    viewModel.sendIntent(ReferralIntent.GetReferral)
-//                        mainNavController.navigate(Screen.GetCashScreen.route)
+                    onClickRefer.invoke()
                     },
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(shape = RoundedCornerShape(10.dp))
-                        .background(brush = YellowButtonGradientBrush),
+                        .background(brush = YellowButtonGradientBrush)
+                        .height(52.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
                 ) {
 
-
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_rupees), // Replace with your image resource
+                        contentDescription = stringResource(R.string.next),
+                    )
                     Text(
-                        text = stringResource(R.string.start_a_course),
+                        modifier = Modifier.padding(start = 10.dp),
+                        text = stringResource(R.string.refer_earn),
                         style = TextStyle(
                             fontSize = 16.sp,
                             lineHeight = 30.sp,
                             fontFamily = FontFamily.Default,
-                            fontWeight = FontWeight(700),
+                            fontWeight = FontWeight(800),
                             color = Color.Black,
                             textAlign = TextAlign.Center,
                         )
                     )
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_arrow_right), // Replace with your image resource
-                        contentDescription = stringResource(R.string.next),
-                    )
+
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))
@@ -393,11 +412,14 @@ private fun ReferralLinkUi() {
             Column(
                 verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
                 horizontalAlignment = Alignment.Start,
-                modifier = Modifier.background(color = DarkBlue40,shape = RoundedCornerShape(size = 12.dp))
+                modifier = Modifier.background(
+                    color = DarkBlue40,
+                    shape = RoundedCornerShape(size = 12.dp)
+                )
 
 
             ) {
-                TermsAndCondition()
+                TermsAndCondition(onClickTermsCondition)
                 HorizontalDivider(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -405,7 +427,7 @@ private fun ReferralLinkUi() {
                         .padding(start = 16.dp, end = 16.dp),
                     color = Purple50
                 )
-                Faq()
+                Faq(onClickFaq)
 
             }
             Spacer(modifier = Modifier.height(100.dp))
@@ -464,11 +486,13 @@ private fun ReferralStep() {
 }
 
 @Composable
-private fun TermsAndCondition() {
+private fun TermsAndCondition(onClickTermsCondition: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(16.dp).clickable{
+            onClickTermsCondition.invoke()
+        }
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_terms_condition), // Replace with your image resource
@@ -497,11 +521,13 @@ private fun TermsAndCondition() {
 }
 
 @Composable
-private fun Faq() {
+private fun Faq(onClickFaq: () -> Unit) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp)
+        modifier = Modifier.padding(16.dp).clickable {
+            onClickFaq.invoke()
+        }
     ) {
         Image(
             painter = painterResource(id = R.drawable.ic_faq), // Replace with your image resource
@@ -525,6 +551,14 @@ private fun Faq() {
             painter = painterResource(id = R.drawable.ic_next_arrow), // Replace with your image resource
             contentDescription = "Background image",
         )
+
+    }
+}
+
+@Preview
+@Composable
+fun ReferralUiPreview() {
+    CourseLinkUi {
 
     }
 }

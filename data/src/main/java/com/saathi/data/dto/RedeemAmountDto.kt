@@ -2,6 +2,12 @@ package com.saathi.data.dto
 
 import com.google.gson.annotations.SerializedName
 
+data class RedeemAmountResponse(
+    @SerializedName("success") var success: Boolean? = null,
+    @SerializedName("version") var version: String? = null,
+    @SerializedName("date") var date: String? = null,
+    @SerializedName("data") var data: RedeemAmountDto = RedeemAmountDto()
+)
 
 data class RedeemAmountDto(
     @SerializedName("_id") var Id: String? = null,

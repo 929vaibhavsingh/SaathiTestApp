@@ -1,7 +1,17 @@
 package com.saathi.data.dto
 
 import com.google.gson.annotations.SerializedName
+import com.saathi.domain.model.ClientMeta
 
+
+data class ReferralResponse(
+    @SerializedName("success") var success: Boolean? = null,
+    @SerializedName("version") var version: String? = null,
+    @SerializedName("date") var date: String? = null,
+    @SerializedName("clientMeta") var clientMeta: ClientMeta? = ClientMeta(),
+    @SerializedName("data") var data: ReferralDto = ReferralDto()
+
+)
 
 data class ReferralDto(
 

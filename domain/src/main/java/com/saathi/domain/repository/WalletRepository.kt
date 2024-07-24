@@ -8,7 +8,7 @@ import com.saathi.domain.model.VerifyUpi
 import com.saathi.domain.result.ApiResult
 
 interface WalletRepository {
-    suspend fun referralData(): ApiResult<Referral>
-    suspend fun verifyUPI(): ApiResult<VerifyUpi>
+
+    suspend fun verifyUPI(upi:String): ApiResult<VerifyUpi>
     suspend fun redeemAmount(redeemAmountRequest: RedeemAmountRequest): ApiResult<RedeemAmount>
 }

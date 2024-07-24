@@ -1,4 +1,4 @@
-package com.saathi.features.screens
+package com.saathi.features.features
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBarItem
@@ -31,6 +32,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.saathi.features.R
+import com.saathi.features.features.referrals.screens.ReferAndEarn
 import com.saathi.features.model.TabBarItem
 import com.saathi.features.theme.BlueScreenGradient2
 import com.saathi.features.theme.DarkBlue
@@ -40,7 +42,6 @@ import com.saathi.features.theme.Purple50
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-@OptIn(ExperimentalMaterial3Api::class)
 fun MainScreen(mainNavController: NavHostController) {
     val trainingTab = TabBarItem(
         title = "Training",
@@ -70,31 +71,26 @@ fun MainScreen(mainNavController: NavHostController) {
     val navController = rememberNavController()
 
     // A surface container using the 'background' color from the theme
-    Surface(
+    Scaffold(
 
-        modifier = Modifier.fillMaxSize(),
-        color = MaterialTheme.colorScheme.primary
+        bottomBar = { TabView(tabBarItems, navController) }, containerColor = DarkBlue,
     ) {
-        Scaffold(
-
-            bottomBar = { TabView(tabBarItems, navController) }, containerColor = DarkBlue,
-        ) {
-            NavHost(navController = navController, startDestination = trainingTab.title) {
-                composable(trainingTab.title) {
-                    Text(trainingTab.title)
-                }
-                composable(certificatesTab.title) {
-                    Text(certificatesTab.title)
-                }
-                composable(trueIdTab.title) {
-                    Text(trueIdTab.title)
-                }
-                composable(referTab.title) {
-                    ReferAndEarn(mainNavController)
-                }
+        NavHost(navController = navController, startDestination = trainingTab.title) {
+            composable(trainingTab.title) {
+                Text(trainingTab.title)
+            }
+            composable(certificatesTab.title) {
+                Text(certificatesTab.title)
+            }
+            composable(trueIdTab.title) {
+                Text(trueIdTab.title)
+            }
+            composable(referTab.title) {
+                ReferAndEarn(mainNavController)
             }
         }
     }
+
 }
 
 
@@ -105,10 +101,11 @@ fun TabView(tabBarItems: List<TabBarItem>, navController: NavController) {
     }
 
     Column {
-        Divider(
-            color = Purple50, modifier = Modifier
+        HorizontalDivider(
+            modifier = Modifier
                 .fillMaxWidth()
-                .width(1.dp)
+                .width(1.dp),
+            color = Purple50
         )
         BottomAppBar(
             containerColor = DarkBlue

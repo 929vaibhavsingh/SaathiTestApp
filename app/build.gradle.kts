@@ -87,11 +87,11 @@ dependencies {
     implementation(Dep.lifecycleRuntime)
     implementation(Dep.coil)
     implementation(Dep.splashScreen)
-
     compose()
     retrofit()
     daggerHilt()
     test()
     androidTest()
+
 }
 

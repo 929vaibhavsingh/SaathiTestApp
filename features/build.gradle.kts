@@ -24,7 +24,7 @@ dependencies {
     implementation(Dep.lifecycleRuntime)
     implementation(Dep.coil)
     implementation(Dep.splashScreen)
-
+    implementation(DaggerHilt.hiltNavigationCompose)
     compose()
     retrofit()
     daggerHilt()

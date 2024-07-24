@@ -1,7 +1,8 @@
-package com.saathi.features.screens
+package com.saathi.features.features.wallet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,23 +31,29 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
- import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.saathi.features.R
+import com.saathi.features.constants.Screen
+import com.saathi.features.features.referrals.viewmodel.ReferAndEarnViewModel
+import com.saathi.features.features.wallet.viewmodel.WalletViewModel
 import com.saathi.features.theme.BlueScreenGradientBrush
 import com.saathi.features.theme.Purple50
 import com.saathi.features.theme.YellowButtonGradientBrush
 import com.saathi.features.theme.YellowTextGradientBrush
 import com.saathi.features.theme.YellowTextShadow
+import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
-fun GetCashScreen(navController: NavHostController) {
+fun GetCashScreen(navController: NavHostController, viewModel: WalletViewModel = hiltViewModel()) {
     var showSheet by remember { mutableStateOf(false) }
 
     if (showSheet) {
-        BottomSheet {
+        BottomSheet(viewModel, onDismiss = { showSheet = false }) {
             showSheet = false
+            navController.navigate(Screen.PaymentProcessingScreen.route)
         }
     }
     Column(
@@ -64,7 +71,11 @@ fun GetCashScreen(navController: NavHostController) {
                 painter = painterResource(id = R.drawable.ic_back_arrow),
                 contentDescription = "image description",
                 contentScale = ContentScale.None,
-                modifier = Modifier.padding(10.dp)
+                modifier = Modifier
+                    .padding(10.dp)
+                    .clickable {
+
+                    }
             )
             Spacer(modifier = Modifier.width(10.dp))
             Text(
@@ -74,8 +85,7 @@ fun GetCashScreen(navController: NavHostController) {
                     fontFamily = FontFamily.Default,
                     fontWeight = FontWeight(700),
                     color = Color.White,
-
-                    )
+                )
             )
         }
         Spacer(modifier = Modifier.height(18.dp))

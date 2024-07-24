@@ -1,7 +1,7 @@
 package com.saathi.data.di
 
 import com.saathi.data.constant.Constants
-import com.saathi.data.services.WalletService
+import com.saathi.data.services.ApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,12 +16,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideWalletApi(): WalletService {
+    fun provideWalletApi(): ApiService {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-            .create(WalletService::class.java)
+            .create(ApiService::class.java)
     }
 
 

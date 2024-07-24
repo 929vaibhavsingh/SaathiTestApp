@@ -73,7 +73,7 @@ fun ReferAndEarnUi(
                 .padding(top = 9.dp, end = 16.dp, bottom = 7.dp)
                 .align(Alignment.End), onClickWallet
         )
-        ReferKareinText()
+        BlueGradientText(stringResource(R.string.refer_karein_aur))
         Spacer(Modifier.height(8.dp))
         ReferAmountText()
         Spacer(Modifier.height(8.dp))
@@ -103,17 +103,6 @@ private fun ReferralUi(
     }
 }
 
-@Composable
-private fun CourseImage() {
-    Image(
-        modifier = Modifier
-            .width(343.dp)
-            .height(170.dp),
-        painter = painterResource(id = R.drawable.rectangle_user),
-        contentDescription = "image description",
-        contentScale = ContentScale.FillBounds
-    )
-}
 
 @Composable
 private fun DailyEarnText() {
@@ -149,21 +138,7 @@ private fun ReferAmountText() {
     )
 }
 
-@Composable
-private fun ReferKareinText() {
-    Text(
-        text = stringResource(R.string.refer_karein_aur).uppercase(Locale.ROOT),
-        style = TextStyle(
-            brush = PurpleTextGradientBrush,
-            fontSize = 20.sp,
-            fontWeight = FontWeight(700),
-            fontFamily = FontFamily.Default,
-            lineHeight = 24.sp,
-            textAlign = TextAlign.Center,
-            shadow = PurpleTextShadow
-        ),
-    )
-}
+
 
 @Composable
 private fun setWalletIcon(isPurchase: Boolean, modifier: Modifier, onClickWallet: () -> Unit) {
@@ -198,18 +173,7 @@ private fun CourseLinkUi(onPurchase: () -> Unit) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(Modifier.height(12.dp))
-            Text(
-                text = stringResource(R.string.your_referral_link).uppercase(),
-                style = TextStyle(
-                    fontSize = 20.sp,
-                    lineHeight = 24.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(700),
-                    brush = PurpleTextGradientBrush,
-                    shadow = PurpleTextShadow,
-                    textAlign = TextAlign.Center,
-                )
-            )
+            BlueGradientText(stringResource(R.string.your_referral_link))
             Spacer(Modifier.height(16.dp))
             ReferralStep()
             Spacer(Modifier.height(24.dp))
@@ -437,123 +401,9 @@ private fun ReferralLinkUi(
     }
 }
 
-@Composable
-private fun ReferralStep() {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.one), // Replace with your image resource
-            contentDescription = stringResource(R.string.step),
-        )
-        Spacer(Modifier.width(5.dp))
-        Text(
-            text = stringResource(R.string.invite_your_friends),
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight(500),
-                color = Color(0xFFFFFFFF),
 
-                )
-        )
-        Spacer(Modifier.width(5.dp))
-        Image(
-            painter = painterResource(id = R.drawable.horizontal_line), // Replace with your image resource
-            contentDescription = "Background image",
-        )
-        Spacer(Modifier.width(5.dp))
-        Image(
-            painter = painterResource(id = R.drawable.two), // Replace with your image resource
-            contentDescription = stringResource(R.string.step),
-        )
-        Spacer(Modifier.width(5.dp))
-        Text(
-            text = stringResource(R.string.earn_100_everytime),
-            style = TextStyle(
-                fontSize = 14.sp,
-                lineHeight = 20.sp,
-                fontFamily = FontFamily.Default,
-                fontWeight = FontWeight(500),
-                color = Color(0xFFFFFFFF),
 
-                )
-        )
-    }
-}
 
-@Composable
-private fun TermsAndCondition(onClickTermsCondition: () -> Unit) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp).clickable{
-            onClickTermsCondition.invoke()
-        }
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_terms_condition), // Replace with your image resource
-            contentDescription = "Background image",
-        )
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp),
-            text = "Terms & Conditions",
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontFamily = FontFamily(Font(R.font.inter)),
-                fontWeight = FontWeight(600),
-                color = Color(0xFFFFFFFF),
-
-                )
-        )
-        Image(
-            painter = painterResource(id = R.drawable.ic_next_arrow), // Replace with your image resource
-            contentDescription = "Background image",
-        )
-
-    }
-}
-
-@Composable
-private fun Faq(onClickFaq: () -> Unit) {
-    Row(
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(16.dp).clickable {
-            onClickFaq.invoke()
-        }
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_faq), // Replace with your image resource
-            contentDescription = "Background image",
-        )
-        Text(
-            modifier = Modifier
-                .weight(1f)
-                .padding(8.dp),
-            text = "FAQs",
-            style = TextStyle(
-                fontSize = 16.sp,
-                lineHeight = 24.sp,
-                fontFamily = FontFamily(Font(R.font.inter)),
-                fontWeight = FontWeight(600),
-                color = Color(0xFFFFFFFF),
-
-                )
-        )
-        Image(
-            painter = painterResource(id = R.drawable.ic_next_arrow), // Replace with your image resource
-            contentDescription = "Background image",
-        )
-
-    }
-}
 
 @Preview
 @Composable

@@ -2,22 +2,22 @@
 
 package com.saathi.features.features.wallet
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -37,11 +37,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.saathi.common.di.ValidationUtils
 import com.saathi.domain.model.RedeemAmountRequest
 import com.saathi.features.features.wallet.intent.WalletIntent
 import com.saathi.features.features.wallet.viewmodel.WalletViewModel
 import com.saathi.features.features.wallet.viewstate.RedeemAmountViewState
-import com.saathi.features.theme.DarkBlue
+import com.saathi.features.features.wallet.viewstate.UPIFieldState
 import com.saathi.features.theme.Purple50
 import com.saathi.features.theme.YellowButtonGradientBrush
 
@@ -61,7 +62,7 @@ fun BottomSheet(
         LoadPaymentProcessingDialog()
     }
     if (isShowPaymentSuccessDialog) {
-        LoadSuccessPaymentDialog{
+        LoadSuccessPaymentDialog {
             isShowPaymentSuccessDialog = false
             onDismiss.invoke()
         }
@@ -96,11 +97,11 @@ fun BottomSheet(
 }
 
 
-
 @Composable
 fun UpiBottomSheet(viewModel: WalletViewModel) {
     val isError = false
     var text by remember { mutableStateOf(TextFieldValue("")) }
+    var textState: UPIFieldState by remember { mutableStateOf(UPIFieldState.IDLE) }
     Column(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.Start,
@@ -128,12 +129,21 @@ fun UpiBottomSheet(viewModel: WalletViewModel) {
                 fontFamily = FontFamily.Default,
                 fontWeight = FontWeight(500),
                 color = Color.White,
-
                 )
         )
 
-        TextFieldM(isError, text) {
+        TextFieldM(text = text, textState) {
             text = it
+            textState =
+                if (it.text.isEmpty()) {
+                    UPIFieldState.FOCUSSED
+                } else if (ValidationUtils.isValidUpiId(it.text)) {
+                    UPIFieldState.SUCCESS
+                } else if (!ValidationUtils.isValidUpiId(it.text)) {
+                    UPIFieldState.ERROR
+                } else {
+                    UPIFieldState.FOCUSSED
+                }
         }
 
         VerifyButton("Verify") {
@@ -179,23 +189,36 @@ private fun VerifyButton(buttonText: String, onClick: () -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TextFieldM(
-    isError: Boolean,
     text: TextFieldValue,
+    textState: UPIFieldState,
     onEmailChange: (data: TextFieldValue) -> Unit
 ) {
 
     return OutlinedTextField(
         modifier = Modifier.fillMaxWidth(),
-        isError = isError,
         value = text,
         textStyle = TextStyle(
             color = Color.White,
         ),
+        trailingIcon ={
+            Icon(imageVector = when (textState) {
+                UPIFieldState.ERROR -> Color.Red
+                UPIFieldState.SUCCESS -> Color.Green
+                UPIFieldState.FOCUSSED -> Color.White
+                else -> Color.White
+            }, contentDescription = "Email Icon", tint = Color.White)
+        },
+
         colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = Color.White,
+            focusedBorderColor = when (textState) {
+                UPIFieldState.ERROR -> Color.Red
+                UPIFieldState.SUCCESS -> Color.Green
+                UPIFieldState.FOCUSSED -> Color.White
+                else -> Color.White
+            },
             unfocusedBorderColor = Color.Gray,
             cursorColor = Color.White,
-        ) ,
+        ),
         onValueChange = {
             onEmailChange(it)
         },

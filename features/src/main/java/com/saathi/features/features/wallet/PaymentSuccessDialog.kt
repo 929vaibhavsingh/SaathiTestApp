@@ -3,22 +3,11 @@ package com.saathi.features.features.wallet
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,18 +30,16 @@ import com.saathi.features.theme.BlueScreenGradientBrush
 import kotlinx.coroutines.delay
 
 @Composable
-fun LoadSuccessPaymentDialog(onDialogDismiss :()->Unit) {
+fun LoadSuccessPaymentDialog(onDialogDismiss: () -> Unit) {
     Dialog(
         onDismissRequest = {},
-        DialogProperties(
-            usePlatformDefaultWidth = false
-        )
+        properties = DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Blue)
-                .zIndex(10F),
+                .zIndex(10f),
             contentAlignment = Alignment.Center
         ) {
             PaymentSuccessScreen(onDialogDismiss)
@@ -63,35 +50,34 @@ fun LoadSuccessPaymentDialog(onDialogDismiss :()->Unit) {
 @Composable
 private fun PaymentSuccessScreen(onDialogDismiss: () -> Unit) {
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
             .background(brush = BlueScreenGradientBrush)
-            .padding(bottom = 40.dp)
+            .padding(bottom = 40.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .weight(1f)
-                .padding(bottom = 10.dp)
+                .padding(bottom = 10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = R.drawable.ic_payment_success), // Replace with your image resource
-                contentDescription = stringResource(R.string.earn_100_everytime),
+                painter = painterResource(id = R.drawable.ic_payment_success),
+                contentDescription = stringResource(R.string.earn_100_everytime)
             )
             Text(
-                text = "₹500 has been successfully \ntransferred ",
+                text = "₹500 has been successfully \ntransferred",
                 style = TextStyle(
                     fontSize = 20.sp,
                     lineHeight = 28.sp,
                     fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFFFFFFFF),
-
-                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.W500,
+                    color = Color.White,
+                    textAlign = TextAlign.Center
                 )
             )
             Text(
@@ -100,10 +86,9 @@ private fun PaymentSuccessScreen(onDialogDismiss: () -> Unit) {
                     fontSize = 14.sp,
                     lineHeight = 21.sp,
                     fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFFFFFFF),
-
-                    )
+                    fontWeight = FontWeight.Normal,
+                    color = Color.White
+                )
             )
         }
 
@@ -116,74 +101,69 @@ fun BackToMainScreen(onDialogDismiss: () -> Unit) {
     var buttonColor by remember { mutableStateOf(Color.White) }
     var countdown by remember { mutableStateOf(5) }
 
-    LaunchedEffect(key1 = countdown) {
+    LaunchedEffect(countdown) {
         if (countdown > 0) {
             delay(1000L)
             countdown--
         }
     }
-    buttonColor = if (countdown == 0) {
-        Color.Yellow
-    } else {
-        Color.White
-    }
+
+    buttonColor = if (countdown == 0) Color.Yellow else Color.White
+
     Column(
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
-        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Redirecting in $countdown..",
+            text = "Redirecting in $countdown...",
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 21.sp,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFFFFFFF),
-
-                )
+                fontWeight = FontWeight.Normal,
+                color = Color.White
+            )
         )
         OutlinedButton(
-
-            onClick = { if (countdown ==0)
-            {
-                onDialogDismiss.invoke()
-            }}, modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
+            onClick = {
+                if (countdown == 0) {
+                    onDialogDismiss()
+                }
+            },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             shape = RoundedCornerShape(8.dp),
-            border = BorderStroke(1.dp, buttonColor)
+            border = BorderStroke(2.dp, buttonColor)
         ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(vertical = 5.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_yellow_back), // Replace with your image resource
+                    painter = painterResource(id = R.drawable.ic_yellow_back),
                     contentDescription = stringResource(R.string.next),
                     colorFilter = ColorFilter.tint(buttonColor)
                 )
                 Text(
-                    modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                     text = "Back",
                     style = TextStyle(
                         fontSize = 16.sp,
                         lineHeight = 30.sp,
                         fontFamily = FontFamily(Font(R.font.inter)),
-                        fontWeight = FontWeight(700),
+                        fontWeight = FontWeight.Bold,
                         color = buttonColor,
-                        textAlign = TextAlign.Center,
+                        textAlign = TextAlign.Center
                     )
                 )
             }
-
         }
     }
-
-
 }
 
 @Preview
 @Composable
 private fun LoadSuccessPreview() {
-//    PaymentSuccessScreen( )
+    LoadSuccessPaymentDialog(onDialogDismiss = {})
 }
-
-

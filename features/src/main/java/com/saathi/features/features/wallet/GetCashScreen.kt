@@ -3,15 +3,7 @@ package com.saathi.features.features.wallet
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -37,14 +29,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.saathi.features.R
 import com.saathi.features.constants.Screen
-import com.saathi.features.features.referrals.viewmodel.ReferAndEarnViewModel
 import com.saathi.features.features.wallet.viewmodel.WalletViewModel
 import com.saathi.features.theme.BlueScreenGradientBrush
 import com.saathi.features.theme.Purple50
 import com.saathi.features.theme.YellowButtonGradientBrush
 import com.saathi.features.theme.YellowTextGradientBrush
 import com.saathi.features.theme.YellowTextShadow
-import dagger.hilt.android.lifecycle.HiltViewModel
 
 @Composable
 fun GetCashScreen(navController: NavHostController, viewModel: WalletViewModel = hiltViewModel()) {
@@ -56,108 +46,113 @@ fun GetCashScreen(navController: NavHostController, viewModel: WalletViewModel =
             navController.navigate(Screen.PaymentProcessingScreen.route)
         }
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = BlueScreenGradientBrush)
-            .padding(16.dp),
-
-        ) {
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.Start),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_back_arrow),
-                contentDescription = "image description",
-                contentScale = ContentScale.None,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .clickable {
-
-                    }
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Text(
-                text = "Get Cash", style = TextStyle(
-                    fontSize = 20.sp,
-                    lineHeight = 28.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(700),
-                    color = Color.White,
-                )
-            )
-        }
+            .background(BlueScreenGradientBrush)
+            .padding(16.dp)
+    ) {
+        Header()
         Spacer(modifier = Modifier.height(18.dp))
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(617.dp)
-                .background(color = Color(0xFF281D5D), shape = RoundedCornerShape(size = 12.dp))
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_arrow_right),
-                contentDescription = "image description",
-                contentScale = ContentScale.None
-            )
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "₹500", style = TextStyle(
-                    fontSize = 52.sp,
-                    lineHeight = 56.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(400),
-                    brush = YellowTextGradientBrush,
-                    shadow = YellowTextShadow,
-                    textAlign = TextAlign.Center,
-                )
-            )
-            Text(
-                text = "Your Earnings", style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 24.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(500),
-                    color = Color(0xFFFFFFFF),
-                    textAlign = TextAlign.Center,
-                )
-            )
-        }
+        EarningsCard()
         Spacer(modifier = Modifier.height(23.dp))
-        Button(
-            onClick = {
-                showSheet = true
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .clip(shape = RoundedCornerShape(10.dp))
-                .background(brush = YellowButtonGradientBrush),
-
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent),
-
-
-            ) {
-
-            Text(
-                text = "Get Cash", style = TextStyle(
-                    fontSize = 16.sp,
-                    lineHeight = 30.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(700),
-                    color = Purple50,
-                    textAlign = TextAlign.Center,
-                )
-            )
-        }
-
+        GetCashButton(onClick = { showSheet = true })
     }
 }
 
+@Composable
+private fun Header() {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_back_arrow),
+            contentDescription = "Back Arrow",
+            modifier = Modifier
+                .clickable { /* Handle back navigation */ }
+                .padding(10.dp)
+        )
+        Text(
+            text = "Get Cash",
+            style = TextStyle(
+                fontSize = 20.sp,
+                lineHeight = 28.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Bold,
+                color = Color.White
+            )
+        )
+    }
+}
 
+@Composable
+private fun EarningsCard() {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF281D5D), RoundedCornerShape(12.dp))
+            .padding(16.dp)
+            .height(617.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_arrow_right),
+            contentDescription = "Arrow Right",
+            contentScale = ContentScale.None
+        )
+        Spacer(modifier = Modifier.height(20.dp))
+        Text(
+            text = "₹500",
+            style = TextStyle(
+                fontSize = 52.sp,
+                lineHeight = 56.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                brush = YellowTextGradientBrush,
+                shadow = YellowTextShadow,
+                textAlign = TextAlign.Center
+            )
+        )
+        Text(
+            text = "Your Earnings",
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 24.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Medium,
+                color = Color.White,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}
 
-
-
-
+@Composable
+private fun GetCashButton(onClick: () -> Unit) {
+    Button(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(YellowButtonGradientBrush),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+    ) {
+        Text(
+            text = "Get Cash",
+            style = TextStyle(
+                fontSize = 16.sp,
+                lineHeight = 30.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Bold,
+                color = Purple50,
+                textAlign = TextAlign.Center
+            )
+        )
+    }
+}

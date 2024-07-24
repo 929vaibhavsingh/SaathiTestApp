@@ -6,12 +6,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,7 +35,7 @@ import com.saathi.features.theme.BlueScreenGradientBrush
 fun LoadPaymentProcessingDialog() {
     Dialog(
         onDismissRequest = {},
-        DialogProperties(
+        properties = DialogProperties(
             usePlatformDefaultWidth = false
         )
     ) {
@@ -48,7 +43,7 @@ fun LoadPaymentProcessingDialog() {
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.Blue)
-                .zIndex(10F),
+                .zIndex(10f),
             contentAlignment = Alignment.Center
         ) {
             PaymentProcessingScreen()
@@ -59,48 +54,38 @@ fun LoadPaymentProcessingDialog() {
 @Composable
 fun PaymentProcessingScreen() {
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
-            .background(brush = BlueScreenGradientBrush)
-            .padding(bottom = 40.dp)
+            .background(BlueScreenGradientBrush)
+            .padding(horizontal = 16.dp, vertical = 40.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(1f)
-                .padding(bottom = 10.dp)
-        ) {
-            RotatingImageProgressBar(
-                painter = painterResource(id = R.drawable.ic_progressbar),
-                size = 120.dp
-            )
-            Text(
-                text = "We are transferring your amount",
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    lineHeight = 21.sp,
-                    fontFamily = FontFamily.Default,
-                    fontWeight = FontWeight(400),
-                    color = Color(0xFFFFFFFF),
-
-                    )
-            )
-        }
-
+        RotatingImageProgressBar(
+            painter = painterResource(id = R.drawable.ic_progressbar),
+            size = 120.dp
+        )
+        Spacer(modifier = Modifier.height(10.dp))
         Text(
-
+            text = "We are transferring your amount",
+            style = TextStyle(
+                fontSize = 14.sp,
+                lineHeight = 21.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight.Normal,
+                color = Color.White
+            )
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Text(
             text = "Please do not hit back button or close this screen until the transaction is complete",
             style = TextStyle(
                 fontSize = 14.sp,
                 lineHeight = 21.sp,
                 fontFamily = FontFamily.Default,
-                fontWeight = FontWeight(400),
-                color = Color(0xFFFFFFFF),
-                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Normal,
+                color = Color.White,
+                textAlign = TextAlign.Center
             )
         )
     }
@@ -117,7 +102,7 @@ fun RotatingImageProgressBar(
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(animationDuration)
+            animation = tween(durationMillis = animationDuration)
         ), label = ""
     )
 
@@ -137,8 +122,6 @@ fun RotatingImageProgressBar(
 
 @Preview
 @Composable
-fun SaathiApp() {
-//    PaymentProcessingScreen(NavHostController())
+fun PreviewPaymentProcessingScreen() {
+    PaymentProcessingScreen()
 }
-
-

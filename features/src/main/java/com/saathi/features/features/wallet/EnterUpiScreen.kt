@@ -52,7 +52,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -239,7 +238,7 @@ fun TextFieldM(
     onEmailChange: (TextFieldValue) -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth().background(color = DarkBlue, RoundedCornerShape(8.dp)),
         value = text,
         textStyle = TextStyle(color = Color.White),
         trailingIcon = {

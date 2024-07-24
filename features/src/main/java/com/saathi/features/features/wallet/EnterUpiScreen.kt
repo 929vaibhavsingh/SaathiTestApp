@@ -3,9 +3,10 @@
 package com.saathi.features.features.wallet
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetDefaults
@@ -19,6 +20,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,11 +50,7 @@ import com.saathi.features.features.wallet.viewstate.VerifyUpiViewState
 import com.saathi.features.theme.DarkBlue
 import com.saathi.features.theme.Purple50
 import com.saathi.features.theme.YellowButtonGradientBrush
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,22 +61,48 @@ fun EnterUpiBottomSheet(
 ) {
     val state by viewModel.redeemAmountDataState.collectAsState(initial = RedeemAmountViewState.Idle)
     val verifyUpiState by viewModel.verifyUpiDataState.collectAsState(initial = VerifyUpiViewState.Idle)
+
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     var isDialogVisible by remember { mutableStateOf(false) }
-
     var isShowPaymentProcessingDialog by remember { mutableStateOf(false) }
-
     var isShowPaymentSuccessDialog by remember { mutableStateOf(false) }
-
     var isUpiVerified by remember { mutableStateOf(false) }
-
     var upiText by remember { mutableStateOf(TextFieldValue("")) }
 
-    CircularProgressDialog(
-        isVisible = isDialogVisible,
-        onDismiss = { isDialogVisible = false }
-    )
+    LaunchedEffect(state) {
+        when (state) {
+            is RedeemAmountViewState.Loading -> isShowPaymentProcessingDialog = true
+            is RedeemAmountViewState.Success -> {
+                delay(2000)
+                isShowPaymentProcessingDialog = false
+                isShowPaymentSuccessDialog = true
+            }
+            is RedeemAmountViewState.Error -> {
+                isShowPaymentProcessingDialog = false
+                onPaymentSuccess(false)
+            }
+            else -> Unit
+        }
+    }
+
+    LaunchedEffect(verifyUpiState) {
+        when (verifyUpiState) {
+            is VerifyUpiViewState.Loading -> isDialogVisible = true
+            is VerifyUpiViewState.Success, is VerifyUpiViewState.Error -> {
+                isDialogVisible = false
+                isUpiVerified = true
+            }
+            else -> Unit
+        }
+    }
+
+    if (isDialogVisible) {
+        CircularProgressDialog(
+            isVisible = isDialogVisible,
+            onDismiss = { isDialogVisible = false }
+        )
+    }
 
     if (isShowPaymentProcessingDialog) {
         LoadPaymentProcessingDialog()
@@ -92,34 +116,6 @@ fun EnterUpiBottomSheet(
         }
     }
 
-    when (state) {
-        is RedeemAmountViewState.Loading -> isShowPaymentProcessingDialog = true
-        is RedeemAmountViewState.Success -> {
-            CoroutineScope(Dispatchers.IO).launch {
-                delay(TimeUnit.SECONDS.toMillis(3))
-                isShowPaymentProcessingDialog = false
-                isShowPaymentSuccessDialog = true
-            }
-        }
-
-        is RedeemAmountViewState.Error -> {
-            isShowPaymentProcessingDialog = false
-            onPaymentSuccess(false)
-        }
-
-        else -> Unit
-    }
-
-    when (verifyUpiState) {
-        is VerifyUpiViewState.Loading -> isDialogVisible = true
-        is VerifyUpiViewState.Success, is VerifyUpiViewState.Error -> {
-            isDialogVisible = false
-            isUpiVerified = true
-        }
-
-        else -> Unit
-    }
-
     ModalBottomSheet(
         containerColor = Purple50,
         onDismissRequest = onDismiss,
@@ -129,23 +125,22 @@ fun EnterUpiBottomSheet(
         UpiBottomSheet(
             upiText = upiText,
             isUpiVerified = isUpiVerified,
-            onTextChange = { upiText = it },
-            onClick = {
-                if (ValidationUtils.isValidUpiId(upiText.text)) {
-                    val intent = if (isUpiVerified) {
-                        WalletIntent.RedeemAmount(
-                            RedeemAmountRequest(
-                                "669a1a48ed716df191be88aa",
-                                "7004617522@upi"
-                            )
+            onTextChange = { upiText = it }
+        ) {
+            if (ValidationUtils.isValidUpiId(upiText.text)) {
+                val intent = if (isUpiVerified) {
+                    WalletIntent.RedeemAmount(
+                        RedeemAmountRequest(
+                            "669a1a48ed716df191be88aa",
+                            upiText.text
                         )
-                    } else {
-                        WalletIntent.VerifyWallet(upiText.text)
-                    }
-                    viewModel.sendIntent(intent)
+                    )
+                } else {
+                    WalletIntent.VerifyWallet(upiText.text)
                 }
+                viewModel.sendIntent(intent)
             }
-        )
+        }
     }
 }
 
@@ -156,10 +151,10 @@ fun UpiBottomSheet(
     onTextChange: (TextFieldValue) -> Unit,
     onClick: () -> Unit
 ) {
-    var textState: UPIFieldState by remember { mutableStateOf(UPIFieldState.IDLE) }
+    var textState :UPIFieldState by remember { mutableStateOf(UPIFieldState.IDLE) }
+    var errorText by remember { mutableStateOf("") }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
             .fillMaxWidth()
@@ -174,7 +169,7 @@ fun UpiBottomSheet(
                 color = Color.White
             )
         )
-
+        Spacer(modifier = Modifier.height(24.dp))
         Text(
             text = "₹500 will be transferred to this UPI ID",
             style = TextStyle(
@@ -185,20 +180,40 @@ fun UpiBottomSheet(
                 color = Color.White
             )
         )
-
+        Spacer(modifier = Modifier.height(24.dp))
         TextFieldM(
             text = upiText,
             textState = textState,
             onEmailChange = {
                 onTextChange(it)
                 textState = when {
-                    it.text.isEmpty() -> UPIFieldState.FOCUSSED
-                    ValidationUtils.isValidUpiId(it.text) -> UPIFieldState.SUCCESS
-                    else -> UPIFieldState.ERROR
+                    it.text.isEmpty() -> {
+                        errorText = ""
+                        UPIFieldState.FOCUSSED
+                    }
+                    ValidationUtils.isValidUpiId(it.text) -> {
+                        errorText = "UPI ID is now verified"
+                        UPIFieldState.SUCCESS
+                    }
+                    else -> {
+                        errorText = "Invalid UPI, please check again"
+                        UPIFieldState.ERROR
+                    }
                 }
             }
         )
-
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(
+            text = errorText,
+            style = TextStyle(
+                fontSize = 13.sp,
+                lineHeight = 21.sp,
+                fontFamily = FontFamily.Default,
+                fontWeight = FontWeight(400),
+                color = Color(0xFFFFFFFF),
+            )
+        )
+        Spacer(modifier = Modifier.height(24.dp))
         VerifyButton(
             buttonText = if (isUpiVerified) "Get Cash" else "Verify",
             onClick = onClick
@@ -238,7 +253,9 @@ fun TextFieldM(
     onEmailChange: (TextFieldValue) -> Unit
 ) {
     OutlinedTextField(
-        modifier = Modifier.fillMaxWidth().background(color = DarkBlue, RoundedCornerShape(8.dp)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = DarkBlue, RoundedCornerShape(8.dp)),
         value = text,
         textStyle = TextStyle(color = Color.White),
         trailingIcon = {

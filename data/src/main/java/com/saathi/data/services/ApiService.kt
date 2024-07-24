@@ -1,10 +1,7 @@
 package com.saathi.data.services
 
-import com.saathi.data.dto.RedeemAmountDto
 import com.saathi.data.dto.RedeemAmountResponse
 import com.saathi.data.dto.ReferralDto
-import com.saathi.data.dto.ReferralResponse
-import com.saathi.data.dto.VerifyUpiDto
 import com.saathi.data.dto.VerifyUpiResponse
 import com.saathi.domain.model.RedeemAmountRequest
 import retrofit2.Response
@@ -18,7 +15,7 @@ interface ApiService {
     @GET("referral/api/V1/referral/")
     suspend fun getReferralData(
         @Query("id") id: String = "669a1a48ed716df191be88aa"
-    ): Response<ReferralResponse>
+    ): Response<ReferralDto>
 
     @POST("payment/api/v1/verifyVPA/{upi_id}/")
     suspend fun verifyUpiApi(

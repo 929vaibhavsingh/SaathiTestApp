@@ -15,7 +15,7 @@ class ReferralRepositoryImp @Inject constructor(
     override suspend fun getReferralData(): ApiResult<Referral> {
         return SafeApiCall.call(
             { apiService.getReferralData() },
-            { referralDto -> referralMapper.mapToReferral(referralDto.data) })
+            { referralDto -> referralMapper.mapToReferral(referralDto) })
 
     }
 }
